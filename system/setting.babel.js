@@ -30,7 +30,7 @@ export default function ( options = { mode: 'DEBUG_LOCAL' } ) {
   const DEBUG_LOCAL_HOST        = 'localhost';
   const DEBUG_LOCAL_PORT        = 8880;
   const DEBUG_LOCAL_SOCKET_HOST = 'localhost';
-  const DEBUG_LOCAL_SOCKET_PORT = 8080;
+  const DEBUG_LOCAL_SOCKET_PORT = 3000;
 
   result.COMMON  = 'common';
   result.IMAGES  = 'images';
@@ -49,8 +49,7 @@ export default function ( options = { mode: 'DEBUG_LOCAL' } ) {
       result.BASE_URL = PRODUCTION_PROTOCOL + '://' + PRODUCTION_HOST + '/';
       result.BASE_PATH = '';
       result.COMMON_BASE_PATH = `/${result.COMMON}/`;
-      result.SOCKET_HOST = PRODUCTION_SOCKET_HOST;
-      result.SOCKET_PORT = PRODUCTION_SOCKET_PORT;
+      result.SOCKET_URL = PRODUCTION_PROTOCOL + '://' + PRODUCTION_SOCKET_HOST + ':' + PRODUCTION_SOCKET_PORT + '/';
     },
     DEBUG () {
       result.FB_APP_ID = '000000000000000';
@@ -60,8 +59,7 @@ export default function ( options = { mode: 'DEBUG_LOCAL' } ) {
       result.BASE_URL = DEBUG_PROTOCOL + '://' + DEBUG_HOST + '/';
       result.BASE_PATH = '';
       result.COMMON_BASE_PATH = `/${result.COMMON}/`;
-      result.SOCKET_HOST = DEBG_SOCKET_HOST;
-      result.SOCKET_PORT = DEBG_SOCKET_PORT;
+      result.SOCKET_URL = DEBUG_PROTOCOL + '://' + DEBUG_SOCKET_HOST + ':' + DEBUG_SOCKET_PORT + '/';
     },
     DEBUG_LOCAL() {
       result.FB_APP_ID = '000000000000000';
@@ -71,8 +69,7 @@ export default function ( options = { mode: 'DEBUG_LOCAL' } ) {
       result.BASE_URL = DEBUG_LOCAL_PROTOCOL + '://' + DEBUG_LOCAL_HOST + ':' + DEBUG_LOCAL_PORT + '/';
       result.BASE_PATH = '';
       result.COMMON_BASE_PATH = `/${result.COMMON}/`;
-      result.SOCKET_HOST = DEBUG_LOCAL_SOCKET_HOST;
-      result.SOCKET_PORT = DEBUG_LOCAL_SOCKET_PORT;
+      result.SOCKET_URL = DEBUG_LOCAL_PROTOCOL + '://' + DEBUG_LOCAL_SOCKET_HOST + ':' + DEBUG_LOCAL_SOCKET_PORT + '/';
     }
   };
 

@@ -14,6 +14,7 @@ var swig           = require('swig');
 var helpers = require(config.PATH.HELPERS);
 // var models = require(config.PATH.MODELS);
 var controllers = require(config.PATH.CONTROLLERS);
+var sockets = require(config.PATH.SOCKETS);
 
 
 var app = express();
@@ -39,6 +40,7 @@ app.use(winstonConfig.settingExpress());
 app.set(config.HELPERS, helpers);
 // app.set(config.MODELS, models);
 app.set(config.CONTROLLERS, controllers);
+app.set(config.SOCKETS, sockets);
 
 
 module.exports = app;

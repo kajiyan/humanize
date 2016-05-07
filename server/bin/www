@@ -57,6 +57,9 @@ app.get(config.HELPERS).setup(app).
   // }).
   then(function() {
     return app.get(config.CONTROLLERS).setup(app);
+  }).
+  then(function() {
+    return app.get(config.SOCKETS).setup(app);
   });
 
 /**
