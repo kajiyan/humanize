@@ -1,0 +1,11 @@
+@import "../core/_setting.scss";
+
+@import "_header.scss";
+@import "_footer.scss";
+
+.l-fluid-image {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  line-height: 0;
+}

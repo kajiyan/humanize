@@ -1,0 +1,3 @@
+export const PAINTING = {
+  CHANGE_COLOR: 'CHANGE_COLOR'
+};

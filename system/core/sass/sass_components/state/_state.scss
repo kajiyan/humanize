@@ -1,0 +1,137 @@
+/* =============================================================================
+    State
+   ========================================================================== */
+.is-debug {
+  box-shadow: rgb(0, 0, 0) 0px 0px 0px 1px inset;
+  background-color: rgba(204, 204, 204, 0.25);
+  * {
+		box-shadow: rgb(0, 0, 0) 0px 0px 0px 1px inset;
+    background-color: rgba(204, 204, 204, 0.25);
+	}
+
+  .is-debug--none {
+    box-shadow: none;
+    background-color: transparent;
+    * {
+      box-shadow: none;
+      background-color: transparent;
+    }    
+  }
+}
+
+
+
+.is-hidden {
+  position: fixed;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  clip: rect(0 0 0 0);
+}
+
+%is-hidden {
+  position: fixed;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.is-invisibility {
+  opacity: 0.0;
+}
+
+.is-transparent {
+  background-color: transparent;
+  color: transparent;
+}
+
+
+
+.is-mpl-block-show {
+  display: none;
+  @include mqLarge {
+    display: block;
+  }
+}
+
+.is-mpl-block-hide {
+  display: block;
+  @include mqLarge {
+    display: none;
+  }
+}
+
+.is-mpl-inline-show {
+  display: none;
+  @include mqLarge {
+    display: inline;
+  }
+}
+
+.is-mpl-inline-hide {
+  display: inline;
+  @include mqLarge {
+    display: none;
+  }
+}
+
+
+
+.is-mpm-block-show {
+  display: none;
+  @include mqMiddle {
+    display: block;
+  }
+}
+
+.is-mpm-block-hide {
+  display: block;
+  @include mqMiddle {
+    display: none;
+  }
+}
+
+.is-mpm-inline-show {
+  display: none;
+  @include mqMiddle {
+    display: inline;
+  }
+}
+
+.is-mpm-inline-hide {
+  display: inline;
+  @include mqMiddle {
+    display: none;
+  }
+}
+
+
+
+.is-mps-block-show {
+  display: none;
+  @include mqSmall {
+    display: block;
+  }
+}
+
+.is-mps-block-hide {
+  display: block;
+  @include mqSmall {
+    display: none;
+  }
+}
+
+.is-mps-inline-show {
+  display: none;
+  @include mqSmall {
+    display: inline;
+  }
+}
+
+.is-mps-inline-hide {
+  display: inline;
+  @include mqSmall {
+    display: none;
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "apps" : [
+    {
+      "name": "Humanize",
+      "script": "bin/www",
+      "watch": true,
+      "ignore_watch" : ["print/receipt/composite"],
+      "env": {
+        "NODE_ENV": "development"
+      }
+    }
+  ]
+}

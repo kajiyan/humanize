@@ -1,0 +1,60 @@
+// Base Font size(px)
+$fontSize: 10;
+$remBase: $fontSize;
+
+// Base line-height
+$lineHeight: ($fontSize / 15);
+
+// Base Window Size
+$baseWidth: 750px;
+$baseHeight: 600px;
+$baseMaxWidth: 1280px;
+$baseMaxHeight: 600px;
+$baseMinWidth: 1000px;
+$baseMinHeight: 560px;
+
+$smallBaseWidth: 320px;
+
+
+// Colors
+$colorBase:    #222222; 
+$colorBg:      #ffffff; 
+$colorLink:    #999999; // :link color 
+$colorHover:   #cccccc; // :hover color 
+$colorActive:  #cccccc; // :active color 
+$colorVisited: #aaaaaa; // :visited color 
+$colorFocus:   #cccccc; // :focus color 
+
+
+$supportMqSmall: true;
+$supportMqMiddle: true;
+$supportMqLarge: true;
+
+
+// Break Point
+$mqSmall: 480px;
+$mqMiddle: 768px;
+$mqLarge: 1280px;
+
+
+// Font Settings
+$fontFamilySet0: "游ゴシック体", "Yu Gothic", "YuGothic", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", 'Meiryo', "メイリオ", "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+$fontFamilySet1: "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", 'Meiryo', "メイリオ", "ＭＳ Ｐゴシック", "MS PGothic", Verdana, Roboto, "Droid Sans", sans-serif;
+
+
+// Path
+
+
+//== Grid system
+//
+//## Define your custom responsive grid.
+//** Number of columns in the grid.
+$gridColumns: 12 !default;
+//** Padding between columns. Gets divided in half for the left and right.
+$gridGutterWidth: 20px !default;
+$mqsGridGutterWidth: 40px !default;
+
+$baseInnerWidth: $baseWidth - $gridGutterWidth;
+$smallBaseInnerWidth: $smallBaseWidth - $mqsGridGutterWidth;
+
+$baseSmallWidth: 750px;

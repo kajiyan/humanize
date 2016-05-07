@@ -1,0 +1,108 @@
+/**
+ * cast
+ * @param {string} - 単位付きの数値
+ * @return {number} - 引数に指定された文字列から単位を外した数値
+ */
+@function cast($value) {
+  @return $value / (1 + $value - $value);
+}
+
+
+// ==========================================
+@mixin remod($property, $values...) {
+  $def-value: "";
+  $rem-value: "";
+
+  $i: 0;
+  @each $v in $values {
+    @if $i == 0 {
+      $def-value: #{$v}
+    } @else {
+      $def-value: #{$def-value} #{$v}
+    }
+    $i: $i + 1;
+  }
+
+  $i: 0;
+  @each $v in $values {
+    @if unitless($v) == false {
+      $v: cast($v)
+    }
+
+    @if $i == 0 {
+      $rem-value: #{($v / $remBase)+"rem"}
+    } @else {
+      $rem-value: #{$rem-value} #{($v / $remBase)+"rem"}
+    }
+    $i: $i + 1;
+  }
+
+  #{$property}: #{$def-value};
+  #{$property}: #{$rem-value};
+}
+
+
+// ==========================================
+@mixin reremod($rem, $property, $values...) {
+  $def-value: "";
+  $rem-value: "";
+
+  $i: 0;
+  @each $v in $values {
+    @if $i == 0 {
+      $def-value: #{$v}
+    } @else {
+      $def-value: #{$def-value} #{$v}
+    }
+    $i: $i + 1;
+  }
+
+  $i: 0;
+  @each $v in $values {
+    @if unitless($v) == false {
+      $v: cast($v)
+    }
+
+    @if $i == 0 {
+      $rem-value: #{($v / $rem)+"rem"}
+    } @else {
+      $rem-value: #{$rem-value} #{($v / $rem)+"rem"}
+    }
+    $i: $i + 1;
+  }
+
+  #{$property}: #{$def-value};
+  #{$property}: #{$rem-value};
+}
+
+
+// ==========================================
+@mixin mqLarge {
+  @if $supportMqLarge == true {
+    @media (min-width: $mqMiddle) {
+      @content;
+    }
+  }
+}
+
+@mixin mqMiddle {
+  @if $supportMqMiddle == true {
+    @media (min-width: $mqSmall) and (max-width: $mqMiddle) {
+      @content;
+    }
+  }
+}
+ 
+@mixin mqSmall {
+  @if $supportMqSmall == true {
+    @media (max-width: #{$mqSmall - 1}) {
+      @content;
+    }
+  }
+}
+
+@mixin mq-landscape {
+  @media (orientation: landscape) {
+    @content;
+  }
+}
