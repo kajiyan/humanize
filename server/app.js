@@ -13,7 +13,7 @@ var swig           = require('swig');
 
 var helpers = require(config.PATH.HELPERS);
 // var models = require(config.PATH.MODELS);
-// var controllers = require(config.PATH.CONTROLLERS);
+var controllers = require(config.PATH.CONTROLLERS);
 // var routers = require(config.PATH.ROUTERS);
 
 var routes = require('./routes/index');
@@ -40,7 +40,7 @@ app.use(winstonConfig.settingExpress());
 
 app.set(config.HELPERS, helpers);
 // app.set(config.MODELS, models);
-// app.set(config.CONTROLLERS, controllers);
+app.set(config.CONTROLLERS, controllers);
 // app.set(config.ROUTERS, routers);
 
 
