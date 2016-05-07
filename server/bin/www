@@ -58,9 +58,6 @@ app.get(config.HELPERS).setup(app).
   then(function() {
     return app.get(config.CONTROLLERS).setup(app);
   });
-  // then(function() {
-  //   return app.get(config.ROUTERS).setup(app);
-  // });
 
 /**
  * Normalize a port into a number, string, or false.
