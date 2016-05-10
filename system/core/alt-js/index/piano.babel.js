@@ -1,92 +1,5 @@
 // --------------------------------------------------
 (function(global) {
-  // --------------------------------------------------
-  // EventEmitter
-  // --------------------------------------------------
-  var EventEmitter = (function() {
-
-    var slice = [].slice;
-
-    function EventEmitter() {}
-
-    EventEmitter.prototype.on = function(event, callback) {
-      if (this._callbacks == null) {
-        this._callbacks = {};
-      }
-      
-      var events = event.split(' ');
-
-      for (var i = 0, len = events.length; i < len; i++) {
-        var base,
-            name = events[i];
-        (base = this._callbacks)[name] || (base[name] = []);
-        this._callbacks[name].push(callback);
-      }
-      
-      return this;
-    };
-
-    EventEmitter.prototype.once = function(event, callback) {
-      this.on(event, function() {
-        this.off(event, arguments.callee);
-        return callback.apply(this, arguments);
-      });
-      return this;
-    };
-
-    EventEmitter.prototype.trigger = function() {
-      var args = 1 <= arguments.length ? slice.call(arguments, 0) : [],
-          event = args.shift(),
-          list = this._callbacks != null ? this._callbacks[event] : void 0;
-
-      if (!list) return;
-
-      for (var i = 0, len = list.length; i < len; i++) {
-        callback = list[i];
-        if (callback.apply(this, args) === false) break;
-      }
-      return this;
-    };
-
-    EventEmitter.prototype.off = function(event, callback) {
-      if (!event) {
-        this._callbacks = {};
-        return this;
-      }
-
-      var events = event.split(' ');
-      
-      for (var i = 0, len0 = events.length; i < len0; i++) {
-        var name = events[i]
-            list = this._callbacks != null ? this._callbacks[name] : void 0;
-        
-        if (list) {
-          if (callback) {
-            for (var j = k = 0, len1 = list.length; k < len1; j = ++k) {
-              cb = list[j];
-              if (!(cb === callback)) {
-                continue;
-              }
-              list = list.slice();
-              list.splice(j, 1);
-              this._callbacks[name] = list;
-            }
-          } else {
-            delete this._callbacks[name];
-          }
-        }
-      }
-      return this;
-    };
-
-    return EventEmitter;
-  })();
-  // --------------------------------------------------
-  // End. EventEmitter
-  // --------------------------------------------------
-
-
-
   /**
    * @classdesc
    * @constructor
@@ -95,11 +8,12 @@
    * @prop {createjs.Stage} keyData.stage - createjs Stageクラスのインスタンスを指定する
    *
    */
+
+  var slice = [].slice;
   createjs.Sound.alternateExtensions = ['mp3'];
 
   function Piano(keyData, options) {
     console.log('[Piano]', keyData, options);
-    this.ee = new EventEmitter();
 
     this.keyData = keyData;
 
@@ -127,6 +41,89 @@
 
     return this;
   }
+
+  /**
+   * Piano#on
+   */
+  Piano.prototype.on = function(event, callback) {
+    if (this._callbacks == null) {
+      this._callbacks = {};
+    }
+    
+    var events = event.split(' ');
+
+    for (var i = 0, len = events.length; i < len; i++) {
+      var base,
+          name = events[i];
+      (base = this._callbacks)[name] || (base[name] = []);
+      this._callbacks[name].push(callback);
+    }
+
+    return this;
+  }
+
+  /**
+   * Piano#once
+   */
+  Piano.prototype.once = function(event, callback) {
+    this.on(event, function() {
+      this.off(event, arguments.callee);
+      return callback.apply(this, arguments);
+    });
+    return this;
+  }
+
+  /**
+   * Piano#trigger
+   */
+  Piano.prototype.trigger = function() {
+    var args = 1 <= arguments.length ? slice.call(arguments, 0) : [],
+        event = args.shift(),
+        list = this._callbacks != null ? this._callbacks[event] : void 0;
+
+    if (!list) return;
+
+    for (var i = 0, len = list.length; i < len; i++) {
+      var callback = list[i];
+      if (callback.apply(this, args) === false) break;
+    }
+    return this;
+  };
+
+  /**
+   * Piano#off
+   */
+  Piano.prototype.off = function(event, callback) {
+    if (!event) {
+      this._callbacks = {};
+      return this;
+    }
+
+    var events = event.split(' ');
+    
+    for (var i = 0, len0 = events.length; i < len0; i++) {
+      var name = events[i]
+          list = this._callbacks != null ? this._callbacks[name] : void 0;
+      
+      if (list) {
+        if (callback) {
+          for (var j = k = 0, len1 = list.length; k < len1; j = ++k) {
+            cb = list[j];
+            if (!(cb === callback)) {
+              continue;
+            }
+            list = list.slice();
+            list.splice(j, 1);
+            this._callbacks[name] = list;
+          }
+        } else {
+          delete this._callbacks[name];
+        }
+      }
+    }
+    return this;
+  };
+
 
   /**
    * Piano#setup
@@ -200,8 +197,7 @@
           var keyCode = 'O' + octaveIndex + '_' + WHITE_KEY_CODE[whiteKeyIndex];
 
           return function(e) {
-            console.log(keyCode);
-            _this.ee.trigger('keyBoardPress', {
+            _this.trigger('keyBoardPress', {
               'keyCode': keyCode
             });
           };
@@ -225,13 +221,15 @@
           drawRect(blackKeyOffsetX + (whiteKeyWidth * blackKeyIndex), 0, blackKeyWidth, whiteKeyHeight);
 
         // イベントリスナーを登録する
-        blackKey.addEventListener('click', (function() {
+        blackKey.addEventListener('click', (function(_this) {
           var keyCode = BLACK_KEY_CODE[blackKeyIndex];
 
           return function(e) {
-            console.log(keyCode);
+            _this.trigger('keyBoardPress', {
+              'keyCode': keyCode
+            });
           };
-        })());
+        })(this));
 
         // 鍵盤をコンテナーに入れる
         octaveContainer.addChild(blackKey);
