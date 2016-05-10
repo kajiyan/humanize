@@ -33,6 +33,18 @@ var Sockets = (function() {
 
     _playSocketIO.on('connection', function(socket) {
       console.log('connection');
+      
+      // ユーザーがディスプレイ上のキーボードを押したタイミングに通知される
+      socket.on('keyPush', function(e) {
+        e.id = socket.id;
+        
+        socket
+          .broadcast
+          .emit('keyPushed', e);
+        
+        console.log('Socket Event | keyPush', e);
+      });
+
     });
 
     var helpers = _app.get(config.HELPERS),
