@@ -39,7 +39,7 @@ require('./piano');
 
     // 画面の解像度に合わせる
     stage.scaleX = stage.scaleY = (IS_RETINA_SUPPORT ? window.devicePixelRatio : 1);
-
+    
 
     var socket = io.connect(`${SETTING.SOCKET_URL}play`);
     
@@ -59,7 +59,8 @@ require('./piano');
       {
         width: canvas.width,
         height: canvas.height,
-        octaveNum: 2
+        octaveNum: 2,
+        octaveOffset: 3
       }
     );
     piano.setup();

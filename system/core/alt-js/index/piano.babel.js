@@ -22,7 +22,8 @@
     var defaults = {
       width: this.keyData.stage.canvas.width,
       height: this.keyData.stage.canvas.height,
-      octaveNum: 1
+      octaveNum: 1,
+      octaveOffset: 0
     };
 
     for (var key in defaults) {
@@ -34,13 +35,156 @@
     // 全体を包括するコンテナ
     this.pianoContainer = new createjs.Container();
     
-    // 黒鍵
-    this.blackKeys = [];
-    // 白鍵
-    this.whiteKeys = [];
+    // サウンドファイルのロードが完了しているかのフラグ
+    this.fileLoaded = false;
 
     return this;
   }
+
+
+  /**
+   * @private
+   * Piano _load
+   */
+  function _load() {
+    console.log('[Piano] _load');
+
+    return new Promise((resolve, reject) => {
+      var loadQueue = new createjs.LoadQueue();
+      var manifest = [];
+
+      // ローディングマニフェストを作る
+      for (var i = 0; i < this.options.octaveNum; i++) {
+        var octave = this.options.octaveOffset + i;
+        
+        manifest = manifest.concat([
+          { id: 'O' + octave + '-C',  src: 'sounds/piano/O' + octave + '-C.ogg' },
+          { id: 'O' + octave + '-C#', src: 'sounds/piano/O' + octave + '-CS.ogg' },
+          { id: 'O' + octave + '-D',  src: 'sounds/piano/O' + octave + '-D.ogg' },
+          { id: 'O' + octave + '-D#', src: 'sounds/piano/O' + octave + '-DS.ogg' },
+          { id: 'O' + octave + '-E',  src: 'sounds/piano/O' + octave + '-E.ogg' },
+          { id: 'O' + octave + '-F',  src: 'sounds/piano/O' + octave + '-F.ogg' },
+          { id: 'O' + octave + '-F#', src: 'sounds/piano/O' + octave + '-FS.ogg' },
+          { id: 'O' + octave + '-G',  src: 'sounds/piano/O' + octave + '-G.ogg' },
+          { id: 'O' + octave + '-G#', src: 'sounds/piano/O' + octave + '-GS.ogg' },
+          { id: 'O' + octave + '-A',  src: 'sounds/piano/O' + octave + '-A.ogg' },
+          { id: 'O' + octave + '-A#', src: 'sounds/piano/O' + octave + '-AS.ogg' },
+          { id: 'O' + octave + '-B',  src: 'sounds/piano/O' + octave + '-B.ogg' }
+        ]);
+      }
+
+      loadQueue.installPlugin(createjs.Sound);
+      loadQueue.setMaxConnections(1);
+
+      loadQueue.addEventListener('progress', (e) => {
+        this.trigger('progress', e);
+      });
+
+      loadQueue.addEventListener('complete', (e) => {
+        this.trigger('complete', e);
+        this.fileLoaded = true;
+        resolve(this);
+      });
+
+      loadQueue.addEventListener('error', (e) => {
+        // キューに追加されているローディング中のアイテムをすべて停止し、キューをクリアする
+        loadQueue.removeAll();
+        reject(this);
+      });
+
+      loadQueue.loadManifest(manifest);
+    });
+  }
+
+
+  /**
+   * @private
+   * Piano _setup
+   */
+  function _setup() {
+    console.log('[Piano] _setup');
+
+    const BLACK_KEY_NUM = 5;
+    const BLACK_KEY_CODE = ['C#', 'D#', 'F#', 'G#', 'A#'];
+    const WHITE_KEY_NUM = 7;
+    const WHITE_KEY_CODE = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+
+    var octaveWidth = this.keyData.stage.canvas.width / this.options.octaveNum;
+    var whiteKeyWidth = ~~(0.5 + (octaveWidth / WHITE_KEY_NUM));
+    var whiteKeyHeight = 300;
+    var blackKeyWidth = ~~(whiteKeyWidth * 0.6);
+    var blackKeyHeight = ~~(whiteKeyHeight * 0.6);
+
+    for (var octaveIndex = 0; octaveIndex < this.options.octaveNum; octaveIndex++) {
+      // 1オクターブを包括するコンテナ
+      var octaveContainer = new createjs.Container();
+
+      for (var whiteKeyIndex = 0; whiteKeyIndex < WHITE_KEY_NUM; whiteKeyIndex++) {
+        var whiteKey = new createjs.Shape();
+        var whiteKeyOffsetX = octaveWidth * octaveIndex;
+
+        // 白鍵を描画する
+        whiteKey.
+          graphics.
+          setStrokeStyle(1) .
+          beginStroke('#5a5a5a').
+          beginFill('#ffffff').
+          drawRect(whiteKeyOffsetX + (whiteKeyWidth * whiteKeyIndex), 0, whiteKeyWidth, whiteKeyHeight);
+
+        // イベントリスナーを登録する
+        whiteKey.addEventListener('click', (() => {
+          var keyCode = 'O' + (this.options.octaveOffset + octaveIndex) + '-' + WHITE_KEY_CODE[whiteKeyIndex];
+
+          return (e) => {
+            createjs.Sound.createInstance(keyCode).play();
+
+            this.trigger('keyBoardPress', {
+              'keyCode': keyCode
+            });
+          }
+        })());
+
+        // 鍵盤をコンテナーに入れる
+        octaveContainer.addChild(whiteKey);
+      }
+
+      for (var blackKeyIndex = 0; blackKeyIndex < BLACK_KEY_NUM; blackKeyIndex++) {
+        var skip = blackKeyIndex >= 2 ? 2 : 1,
+            blackKey = new createjs.Shape(),
+            blackKeyOffsetX = octaveWidth * octaveIndex + (whiteKeyWidth * skip) - (blackKeyWidth / 2);
+
+        // 黒鍵を描画する
+        blackKey.
+          graphics.
+          setStrokeStyle(1) .
+          beginStroke('#5a5a5a').
+          beginFill('#ffffff').
+          drawRect(blackKeyOffsetX + (whiteKeyWidth * blackKeyIndex), 0, blackKeyWidth, whiteKeyHeight);
+
+        // イベントリスナーを登録する
+        blackKey.addEventListener('click', (() => {
+          var keyCode = 'O' + (this.options.octaveOffset + octaveIndex) + '-' + BLACK_KEY_CODE[blackKeyIndex];
+
+          return (e) => {
+            createjs.Sound.createInstance(keyCode).play();
+
+            this.trigger('keyBoardPress', {
+              'keyCode': keyCode
+            });
+          }
+        })());
+
+        // 鍵盤をコンテナーに入れる
+        octaveContainer.addChild(blackKey);
+      }
+
+      // 1オクターブ分の鍵盤をコンテナーに入れる
+      this.pianoContainer.addChild(octaveContainer);
+    }
+    this.keyData.stage.addChild(this.pianoContainer);
+    this.keyData.stage.update();
+  }
+
 
   /**
    * Piano#on
@@ -131,116 +275,11 @@
   Piano.prototype.setup = function() {
     console.log('[Piano] setup');
 
-    const BLACK_KEY_NUM = 5;
-    const BLACK_KEY_CODE = ['C#', 'D#', 'F#', 'G#', 'A#'];
-    const WHITE_KEY_NUM = 7;
-    const WHITE_KEY_CODE = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-
-    var octaveWidth = this.keyData.stage.canvas.width / this.options.octaveNum;
-    var whiteKeyWidth = ~~(0.5 + (octaveWidth / WHITE_KEY_NUM));
-    var whiteKeyHeight = 300;
-    var blackKeyWidth = ~~(whiteKeyWidth * 0.6);
-    var blackKeyHeight = ~~(whiteKeyHeight * 0.6);
-
-    var manifest = [
-      { id: 'O0_C',  src: 'sounds/piano/O0-C.ogg' },
-      { id: 'O0_D',  src: 'sounds/piano/O0-D.ogg' },
-      { id: 'O0_E',  src: 'sounds/piano/O0-E.ogg' },
-      { id: 'O0_F',  src: 'sounds/piano/O0-F.ogg' },
-      { id: 'O0_G',  src: 'sounds/piano/O0-G.ogg' },
-      { id: 'O0_A',  src: 'sounds/piano/O0-A.ogg' },
-      { id: 'O0_B',  src: 'sounds/piano/O0-B.ogg' },
-      { id: 'O0_C#', src: 'sounds/piano/O0-C#.ogg' },
-      { id: 'O0_D#', src: 'sounds/piano/O0-D#.ogg' },
-      { id: 'O0_F#', src: 'sounds/piano/O0-F#.ogg' },
-      { id: 'O0_G#', src: 'sounds/piano/O0-G#.ogg' },
-      { id: 'O0_A#', src: 'sounds/piano/O0-A#.ogg' }
-    ];
-    var loadQueue = new createjs.LoadQueue();
-    loadQueue.installPlugin(createjs.Sound);
-    loadQueue.setMaxConnections(1);
-
-    loadQueue.addEventListener('progress', function(e) {
-
-    });
-
-    loadQueue.addEventListener('complete', function(e) {
-
-    });
-
-    loadQueue.addEventListener('error', function(e) {
-      // キューに追加されているローディング中のアイテムをすべて停止し、キューをクリアする
-      loadQueue.removeAll();
-    });
-
-    // loadQueue.loadManifest(manifest);
-
-
-    for (var octaveIndex = 0; octaveIndex < this.options.octaveNum; octaveIndex++) {
-      // 1オクターブを包括するコンテナ
-      var octaveContainer = new createjs.Container();
-
-      for (var whiteKeyIndex = 0; whiteKeyIndex < WHITE_KEY_NUM; whiteKeyIndex++) {
-        var whiteKey = new createjs.Shape();
-        var whiteKeyOffsetX = octaveWidth * octaveIndex;
-
-        // 白鍵を描画する
-        whiteKey.
-          graphics.
-          setStrokeStyle(1) .
-          beginStroke('#5a5a5a').
-          beginFill('#ffffff').
-          drawRect(whiteKeyOffsetX + (whiteKeyWidth * whiteKeyIndex), 0, whiteKeyWidth, whiteKeyHeight);
-
-        // イベントリスナーを登録する
-        whiteKey.addEventListener('click', (function(_this) {
-          var keyCode = 'O' + octaveIndex + '_' + WHITE_KEY_CODE[whiteKeyIndex];
-
-          return function(e) {
-            _this.trigger('keyBoardPress', {
-              'keyCode': keyCode
-            });
-          };
-        })(this));
-
-        // 鍵盤をコンテナーに入れる
-        octaveContainer.addChild(whiteKey);
-      }
-
-      for (var blackKeyIndex = 0; blackKeyIndex < BLACK_KEY_NUM; blackKeyIndex++) {
-        var skip = blackKeyIndex >= 2 ? 2 : 1,
-            blackKey = new createjs.Shape(),
-            blackKeyOffsetX = octaveWidth * octaveIndex + (whiteKeyWidth * skip) - (blackKeyWidth / 2);
-
-        // 黒鍵を描画する
-        blackKey.
-          graphics.
-          setStrokeStyle(1) .
-          beginStroke('#5a5a5a').
-          beginFill('#ffffff').
-          drawRect(blackKeyOffsetX + (whiteKeyWidth * blackKeyIndex), 0, blackKeyWidth, whiteKeyHeight);
-
-        // イベントリスナーを登録する
-        blackKey.addEventListener('click', (function(_this) {
-          var keyCode = BLACK_KEY_CODE[blackKeyIndex];
-
-          return function(e) {
-            _this.trigger('keyBoardPress', {
-              'keyCode': keyCode
-            });
-          };
-        })(this));
-
-        // 鍵盤をコンテナーに入れる
-        octaveContainer.addChild(blackKey);
-      }
-
-
-      // 1オクターブ分の鍵盤をコンテナーに入れる
-      this.pianoContainer.addChild(octaveContainer);
-    }
-    this.keyData.stage.addChild(this.pianoContainer);
+    _load.call(this);
+    _setup.call(this);
+    
   };
+
 
   /**
    * Piano#drawPiano
