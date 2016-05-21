@@ -15,7 +15,7 @@ export default function ( options = { mode: 'DEBUG_LOCAL' } ) {
   result.MODE = defaults.mode.toUpperCase();
 
   const PRODUCTION_PROTOCOL    = 'http';
-  const PRODUCTION_HOST        = 'paparacci.me';
+  const PRODUCTION_HOST        = '160.16.230.26';
   const PRODUCTION_PORT        = 80;
   const PRODUCTION_SOCKET_HOST = '';
   const PRODUCTION_SOCKET_PORT = 8080;
@@ -28,9 +28,9 @@ export default function ( options = { mode: 'DEBUG_LOCAL' } ) {
 
   const DEBUG_LOCAL_PROTOCOL    = 'http';
   const DEBUG_LOCAL_HOST        = 'localhost';
-  const DEBUG_LOCAL_PORT        = 8880;
-  const DEBUG_LOCAL_SOCKET_HOST = 'localhost';
-  const DEBUG_LOCAL_SOCKET_PORT = 3000;
+  const DEBUG_LOCAL_PORT        = 8088;
+  const DEBUG_LOCAL_SOCKET_HOST = 'localhost'; // "localhost" or IP
+  const DEBUG_LOCAL_SOCKET_PORT = 8080;
 
   result.COMMON  = 'common';
   result.IMAGES  = 'images';
@@ -103,7 +103,7 @@ export default function ( options = { mode: 'DEBUG_LOCAL' } ) {
 
     result.SYSTEM      = 'system';
     result.SYSTEM_CORE = 'core';
-    result.APPLICATION = 'application';
+    result.APPLICATION = 'server/public';
     result.DOCS = 'docs';
 
     result.ROOT = '../'

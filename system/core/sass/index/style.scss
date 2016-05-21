@@ -6,6 +6,7 @@
 
 
 
+
 // @include mqSmall {
 //   background-color: red;
 // }
@@ -33,21 +34,201 @@ a:focus {
 }
 
 
-.paparacci {
+.humanize {
   font-family: $fontFamilySet1;
+
+  &.desktop {
+    .l-portrait--is_show { display: none; }
+  }
+  &.mobile {
+    &.portrait {
+      .l-portrait--is_show { display: block; }
+    }
+    &.landscape {
+      .l-portrait--is_show { display: none; }
+    }
+  }
+  &.tablet {
+    &.portrait {
+      .l-portrait--is_show { display: block; }
+    }
+    &.landscape {
+      .l-portrait--is_show { display: none; }
+    }
+  }
+
+  // debug style
+  &.debug {
+    // &.desktop {
+    //   .l-portrait--is_show { display: block; }
+    // }
+  } 
 }
 
-.paparacci,
-.paparacci-body {
+.humanize,
+.humanize-body {
+  width: 100%;
+  height: 100%;
 }
 
   .app {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    top: 0;
+    left: 0;
   }
 
-    .app-inner {
+    // .app-inner {
+    //   width: 100%;
+    //   height: 100%;
+    // }
+
+
+.warning {
+  background-color: #ffffff;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2147483647;
+  
+  .warning-inner {
+    background-image: url('../images/warning-0.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    width: 100%;
+    height: 100%;
+  }
+
+  .landscape & {
+    display: block;
+  }
+
+  .debug & {
+    position: relative;
+  }
+}
+
+
+/* ============================================================================= */
+/*  INTRO                                                                        */
+.intro {
+  background-color: #ffffff;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+
+  .intro-inner {
+    width: percentage($landscapeInnerWidth / $landscapeWidth);
+    height: 100%;
+    margin: 0 auto;
+  }
+
+  .intro-heading {
+    margin: 0 0 percentage(32px / $landscapeWidth);
+  }
+    .intro-heading-inner {
+      width: percentage(122px / $landscapeWidth);
+      margin: 0 auto;
     }
 
+  .intro-body {
+    position: relative;
+    top: 0;
+    left: 0;
+  }
+    .intro-loading {
+      position: relative;
+      top: 0;
+      left: 0;
+    }
+      .intro-loading--h2 {
+        color: #222222;
+        font-family: 'Roboto Condensed';
+        font-weight: normal;
+        // line-height: (50 / cast($fontSize));
+        text-align: center;
+        line-height: 1;
+        margin: 0 0 percentage(12px / $landscapeWidth);
+      }
+        .intro-loading--percentage {
+          $fontSize: 24px;
+          @include remod(font-size, $fontSize);
+          font-size: ($fontSize / $landscapeWidth * 100) + vw;
+          display: inline-block;
+        }
+        .intro-loading--unit {
+          $fontSize: 16px;
+          @include remod(font-size, $fontSize);
+          font-size: ($fontSize / $landscapeWidth * 100) + vw;
+          display: inline-block;
+        }
 
+
+      .intro-loading--wrapper {
+        border-radius: 3px;
+        background-color: #f5bdd5;
+        height: 6px;
+      }
+        .intro-loading--progress {
+          border-radius: 3px;
+          background-color: #e85895;
+          width: 0%;
+          height: 100%;
+          transition-property: width;
+          transition-duration: 0.2s;
+        }
+    
+    .intro-ensemble {
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0.0;
+    }
+      .intro-ensemble__button {
+        $fontSize: 14px;
+        color: #ffffff;
+        background-color: #222222;
+        font-family: 'Roboto Condensed';
+        @include remod(font-size, $fontSize);
+        font-size: ($fontSize / $landscapeWidth * 100) + vw;
+        letter-spacing: 0.075em;
+        line-height: 1;
+        outline: none;
+        display: block;
+        padding: 0.5em;
+        margin: 0 auto;
+      }
+}
+/*  End. INTRO                                                                   */
+/* ============================================================================= */
+
+/* ============================================================================= */
+/*  PIANO                                                                        */
+.piano {
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+
+  .piano-canvas {
+    display: block;
+    margin: 0 auto;
+  }
+}
+/*  End. PIANO                                                                   */
+/* ============================================================================= */
 
 
 /* ============================================================================= */

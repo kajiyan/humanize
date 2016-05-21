@@ -68,6 +68,8 @@ export default function (target, setting) {
       let result = [
         // new BowerWebpackPlugin(),
         new webpack.ProvidePlugin({
+          jQuery: 'jquery',
+          $: 'jquery',
           _: 'lodash',
           Backbone: 'backbone',
           Modernizr: 'modernizr/modernizr',

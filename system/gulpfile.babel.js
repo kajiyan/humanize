@@ -3,7 +3,7 @@
 // gulp build --ENV -m DEBUG_LOCAL
 
 import webpackConfig from './webpack.config';
-import setting from './setting';
+import setting from './setting.babel';
 
 import gulp from 'gulp';
 import rename from 'gulp-rename';

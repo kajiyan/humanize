@@ -34,9 +34,12 @@
 
     // 全体を包括するコンテナ
     this.pianoContainer = new createjs.Container();
-    
+    this.pianoOffset = new createjs.Point(0, 0);
+
     // サウンドファイルのロードが完了しているかのフラグ
     this.fileLoaded = false;
+
+    this.effectTimelines = [];
 
     return this;
   }
@@ -109,80 +112,208 @@
     const WHITE_KEY_NUM = 7;
     const WHITE_KEY_CODE = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
-    var octaveWidth = this.keyData.stage.canvas.width / this.options.octaveNum;
-    var whiteKeyWidth = ~~(0.5 + (octaveWidth / WHITE_KEY_NUM));
-    var whiteKeyHeight = 300;
+    // var oneOctaveWidth = this.keyData.stage.canvas.width / this.options.octaveNum;
+    var oneOctaveWidth = (140 * WHITE_KEY_NUM) / this.options.octaveNum;
+    var whiteKeyWidth = ~~(0.5 + (oneOctaveWidth / WHITE_KEY_NUM));
+    var whiteKeyHeight = 280;
     var blackKeyWidth = ~~(whiteKeyWidth * 0.6);
     var blackKeyHeight = ~~(whiteKeyHeight * 0.6);
+    var effectSize = 30;
+
+    this.keyData.stage.enableMouseOver();
 
     for (var octaveIndex = 0; octaveIndex < this.options.octaveNum; octaveIndex++) {
       // 1オクターブを包括するコンテナ
       var octaveContainer = new createjs.Container();
 
       for (var whiteKeyIndex = 0; whiteKeyIndex < WHITE_KEY_NUM; whiteKeyIndex++) {
+        var whiteKeyContainer = new createjs.Container();
         var whiteKey = new createjs.Shape();
-        var whiteKeyOffsetX = octaveWidth * octaveIndex;
+        var whiteKeyOffsetX = oneOctaveWidth * octaveIndex;
+
+        whiteKeyContainer.x = whiteKeyOffsetX + (whiteKeyWidth * whiteKeyIndex);
 
         // 白鍵を描画する
         whiteKey.
           graphics.
           setStrokeStyle(1) .
-          beginStroke('#5a5a5a').
+          beginStroke('#e85895').
           beginFill('#ffffff').
-          drawRect(whiteKeyOffsetX + (whiteKeyWidth * whiteKeyIndex), 0, whiteKeyWidth, whiteKeyHeight);
+          drawRect(0, 0, whiteKeyWidth, whiteKeyHeight);
+
+        var effect = new createjs.Shape();
+        
+        effect.
+          graphics.
+          beginFill('#e85895').
+          drawCircle(0, 0, effectSize);
+
+        // マウスに反応しないようにする
+        effect.mouseEnabled = false;
+        effect.scaleX = effect.scaleY = 0.0;
+        effect.x = whiteKeyWidth / 2;
+        effect.y = whiteKeyHeight - (effectSize + 8);
+
+        var effectTimeline = new createjs.Timeline(
+          [
+            createjs.Tween.get(effect).to(
+              {
+                scaleX: 2.0,
+                scaleY: 2.0,
+                alpha: 0.0
+              },
+              400,
+              createjs.Ease.quartOut
+            )
+          ],
+          {
+            start: 0
+          },
+          {
+            paused: true
+          }
+        );
+
 
         // イベントリスナーを登録する
-        whiteKey.addEventListener('click', (() => {
+        whiteKey.addEventListener('mousedown', ((_effectTimeline) => {
           var keyCode = 'O' + (this.options.octaveOffset + octaveIndex) + '-' + WHITE_KEY_CODE[whiteKeyIndex];
 
+          var tl = {};
+          tl.keyCode = keyCode;
+          tl.effect = _effectTimeline;
+          this.effectTimelines.push(tl);
+
           return (e) => {
+
             createjs.Sound.createInstance(keyCode).play();
+
+            _effectTimeline.gotoAndPlay('start');
 
             this.trigger('keyBoardPress', {
               'keyCode': keyCode
             });
           }
+        })(effectTimeline));
+
+        whiteKey.addEventListener('pressup', (() => {
+          return (e) => {
+            this.trigger('keyBoardPressUp', {});
+          }
         })());
 
+
         // 鍵盤をコンテナーに入れる
-        octaveContainer.addChild(whiteKey);
+        whiteKeyContainer.addChild(whiteKey);
+        whiteKeyContainer.addChild(effect);
+
+        // 鍵盤をオクターブ単位で管理するコンテナーに入れる
+        octaveContainer.addChild(whiteKeyContainer);
       }
+
+
 
       for (var blackKeyIndex = 0; blackKeyIndex < BLACK_KEY_NUM; blackKeyIndex++) {
         var skip = blackKeyIndex >= 2 ? 2 : 1,
+            blackKeyContainer = new createjs.Container(),
             blackKey = new createjs.Shape(),
-            blackKeyOffsetX = octaveWidth * octaveIndex + (whiteKeyWidth * skip) - (blackKeyWidth / 2);
+            blackKeyOffsetX = oneOctaveWidth * octaveIndex + (whiteKeyWidth * skip) - (blackKeyWidth / 2);
+
+        blackKeyContainer.x = blackKeyOffsetX + (whiteKeyWidth * blackKeyIndex);
 
         // 黒鍵を描画する
         blackKey.
           graphics.
           setStrokeStyle(1) .
-          beginStroke('#5a5a5a').
-          beginFill('#ffffff').
-          drawRect(blackKeyOffsetX + (whiteKeyWidth * blackKeyIndex), 0, blackKeyWidth, whiteKeyHeight);
+          beginStroke('#e85895').
+          beginFill('#000000').
+          drawRect(0, 0, blackKeyWidth, blackKeyHeight);
+
+        var effect = new createjs.Shape();
+        
+        effect.
+          graphics.
+          beginFill('#e85895').
+          drawCircle(0, 0, effectSize);
+
+        // マウスに反応しないようにする
+        effect.mouseEnabled = false;
+        effect.scaleX = effect.scaleY = 0.0;
+        effect.x = blackKeyWidth / 2;
+        effect.y = blackKeyHeight - (effectSize + 8);
+
+        var effectTimeline = new createjs.Timeline(
+          [
+            createjs.Tween.get(effect).to(
+              {
+                scaleX: 2.0,
+                scaleY: 2.0,
+                alpha: 0.0
+              },
+              400,
+              createjs.Ease.quartOut
+            )
+          ],
+          {
+            start: 0
+          },
+          {
+            paused: true
+          }
+        );
 
         // イベントリスナーを登録する
-        blackKey.addEventListener('click', (() => {
+        blackKey.addEventListener('mousedown', ((_effectTimeline) => {
           var keyCode = 'O' + (this.options.octaveOffset + octaveIndex) + '-' + BLACK_KEY_CODE[blackKeyIndex];
+
+          var tl = {};
+          tl.keyCode = keyCode;
+          tl.effect = _effectTimeline;
+          this.effectTimelines.push(tl);
 
           return (e) => {
             createjs.Sound.createInstance(keyCode).play();
+
+            _effectTimeline.gotoAndPlay('start');
 
             this.trigger('keyBoardPress', {
               'keyCode': keyCode
             });
           }
-        })());
+        })(effectTimeline));
 
         // 鍵盤をコンテナーに入れる
-        octaveContainer.addChild(blackKey);
+        blackKeyContainer.addChild(blackKey);
+        blackKeyContainer.addChild(effect);
+
+        // 鍵盤をオクターブ単位で管理するコンテナーに入れる
+        octaveContainer.addChild(blackKeyContainer);
       }
+
+      // 鍵盤全体の起点を中心にする
+      octaveContainer.regX = oneOctaveWidth * this.options.octaveNum / 2;
+      octaveContainer.regY = whiteKeyHeight / 2;
+
+      // 鍵盤全体を画面中央へ移動させる
+      octaveContainer.x = this.keyData.stage.canvas.width / 2;
+      octaveContainer.y = this.keyData.stage.canvas.height / 2;
 
       // 1オクターブ分の鍵盤をコンテナーに入れる
       this.pianoContainer.addChild(octaveContainer);
     }
     this.keyData.stage.addChild(this.pianoContainer);
     this.keyData.stage.update();
+
+    // Event Listener
+    this.pianoContainer.addEventListener('mousedown', (e) => {
+      this.pianoOffset.x = this.keyData.stage.mouseX - this.pianoContainer.x;
+      this.pianoOffset.y = this.keyData.stage.mouseY - this.pianoContainer.y;
+    });
+
+    this.pianoContainer.addEventListener('pressmove', (e) => {
+      this.pianoContainer.x = this.keyData.stage.mouseX - this.pianoOffset.x;
+      this.pianoContainer.y = this.keyData.stage.mouseY - this.pianoOffset.y;
+    });
   }
 
 
@@ -271,20 +402,49 @@
 
   /**
    * Piano#setup
+   *
+   * @return {Promise} Promise を返す
+   *
    */
   Piano.prototype.setup = function() {
     console.log('[Piano] setup');
 
-    _load.call(this);
-    _setup.call(this);
-    
+    return new Promise((resolve, reject) => {
+      _load.call(this).
+        then(
+          () => {
+            _setup.call(this);
+            resolve(this, { status: 1 });
+          },
+          () => {
+            reject(this,  { status: 0 });
+          }
+        );
+    });
   };
 
 
   /**
-   * Piano#drawPiano
+   * Piano play
+   *
+   * @param {Object} data
+   * @prop {String} data.id - ユーザーのsocket.id
+   * @prop {String} data.keyCode - 押されたキーに対応するコードの文字列
+   *
    */
-  Piano.prototype.drawPiano = function() {
+  Piano.prototype.play = function(data) {
+    console.log(data);
+    createjs.Sound.createInstance(data.keyCode).play();
+    var timeline = _.find(this.effectTimelines, function(tl) {
+      if (tl.keyCode === data.keyCode) {
+        console.log(tl);
+        return tl;
+      }
+    });
+    timeline.effect.gotoAndPlay('start');
+  };
+
+  Piano.prototype.drawPiano = function(data) {
     console.log('[Piano] drawPiano');
   };
 

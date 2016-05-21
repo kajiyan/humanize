@@ -28,17 +28,17 @@
 <a name="socket-api"></a>
 ## Socket API
 
-### Namespace `play` : port `10022`
+### Namespace `play` : port `8080`
 下記のルールでアクセス可能とする
 <br>
 <br>
 **開発環境**
 	
-	http://localhost:10022
+	http://localhost:8080
 
 **本番環境**
 	
-	http://humanize.telenoia.org:10022
+	http://160.16.230.26:8080
 	
 
 #### [`Client -> Server`](#io-client-to-server)

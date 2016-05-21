@@ -13,7 +13,14 @@ $baseMaxHeight: 600px;
 $baseMinWidth: 1000px;
 $baseMinHeight: 560px;
 
-$smallBaseWidth: 320px;
+$landscapeWidth: 750px;
+$landscapeHeight: 1334px;
+$portraitWidth: 1334px;
+$portraitHeight: 750px;
+
+
+$landscapeGutterWidth: 60px !default;
+$landscapeInnerWidth: $landscapeWidth - $landscapeGutterWidth;
 
 
 // Colors
@@ -55,6 +62,5 @@ $gridGutterWidth: 20px !default;
 $mqsGridGutterWidth: 40px !default;
 
 $baseInnerWidth: $baseWidth - $gridGutterWidth;
-$smallBaseInnerWidth: $smallBaseWidth - $mqsGridGutterWidth;
 
 $baseSmallWidth: 750px;

@@ -25,7 +25,7 @@ module.exports = (function() {
   result.PATH.ROUTERS = path.join(result.PATH.ROOT_DIRECTORY, result.ROUTERS);
   result.PATH.HELPERS = path.join(result.PATH.ROOT_DIRECTORY, result.HELPERS);
 
-  result.EXPRESS_PORT = 3000;
+  result.EXPRESS_PORT = 8080;
 
   // データベース関係
   result.database = {};
